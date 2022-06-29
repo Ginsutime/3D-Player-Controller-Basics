@@ -14,8 +14,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed;
     [SerializeField] private float jumpForce;
     [SerializeField] private float gravityValue;
+
     private float coyoteTime = 0.3f;
     private float coyoteTimeCounter;
+    private float jumpBufferTime = 0.2f;
+    private float jumpBufferCounter;
 
     [Header("Ground Detection Hookups")]
     [SerializeField] Transform groundCheck;
@@ -38,20 +41,22 @@ public class PlayerController : MonoBehaviour
 
         velocity = (((xzInput.x * transform.right) + (xzInput.z * transform.forward)) * moveSpeed) + (velocity.y * transform.up);
 
-        // Find way to prevent gravity from forcing player down too quickly if they drop off a ledge
-        if (canJump)
+        if (canJump || (grounded && jumpBufferCounter > 0))
         {
-            coyoteTimeCounter = 0;
+            jumpBufferCounter = 0; // Prevents unintended additional jumps
+            coyoteTimeCounter = 0; // Prevents double jump coyote time bug
             velocity.y = jumpForce;
             canJump = false;
         }
         else if (grounded && velocity.y < 0)
         {
+            jumpBufferCounter = 0;
             coyoteTimeCounter = coyoteTime;
-            velocity.y = -5f;
+            velocity.y = -5f; // Prevents gravity from forcing player down too quickly if they drop off a ledge
         }
         else
         {
+            jumpBufferCounter -= Time.deltaTime;
             coyoteTimeCounter -= Time.deltaTime;
             velocity.y -= gravityValue * Time.deltaTime; 
         }
@@ -74,6 +79,8 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("Jump state reached");
                 canJump = true;
             }
+            else
+                jumpBufferCounter = jumpBufferTime;
         }
     }
 }
