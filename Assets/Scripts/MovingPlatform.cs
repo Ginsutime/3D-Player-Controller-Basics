@@ -43,7 +43,7 @@ public class MovingPlatform : MonoBehaviour
 #endif
     #endregion
 
-    void Update()
+    void FixedUpdate()
     {
         if (backtrack == false)
         {
@@ -71,5 +71,21 @@ public class MovingPlatform : MonoBehaviour
         }
 
         transform.position = Vector3.MoveTowards(transform.position, movePoints[currentPoint].transform.position, platformSpeed * Time.deltaTime);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        {
+            other.transform.parent.gameObject.transform.parent = gameObject.transform;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        {
+            other.transform.parent.gameObject.transform.parent = null;
+        }
     }
 }

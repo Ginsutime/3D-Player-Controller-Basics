@@ -76,7 +76,7 @@ public class PlayerController : MonoBehaviour
         {
             if (coyoteTimeCounter > 0f)
             {
-                Debug.Log("Jump state reached");
+                // Jump state reached
                 canJump = true;
             }
             else
