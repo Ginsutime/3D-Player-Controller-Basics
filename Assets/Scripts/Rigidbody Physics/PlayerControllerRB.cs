@@ -11,7 +11,8 @@ public class PlayerControllerRB : MonoBehaviour
     [SerializeField] private float maxSpeed = 5f; // Get this hooked up eventually to cap acceleration
     [SerializeField] private float moveSpeed = 1f;
     [SerializeField] private float jumpForce = 1f;
-    [SerializeField] private float gravityAmount = 1f;
+    [SerializeField] private float normGravityAmount = 1f;
+    [SerializeField] private float lowJumpGravityAmount = 1f;
     Vector3 forceDirection;
     Vector3 xzInput;
 
@@ -20,7 +21,7 @@ public class PlayerControllerRB : MonoBehaviour
     [SerializeField] LayerMask groundMask;
     private float groundDistance = 0.2f;
     private bool grounded;
-    private bool canJump;
+    private bool canJump, releasedJump;
 
     private void Awake()
     {
@@ -40,13 +41,18 @@ public class PlayerControllerRB : MonoBehaviour
             forceDirection.y = jumpForce;
             canJump = false;
         }
+        else if (rb.velocity.y > 0 && releasedJump)
+        {
+            forceDirection.y -= lowJumpGravityAmount * Time.fixedDeltaTime;
+        }
         else if (grounded && forceDirection.y < 0)
         {
+            releasedJump = false;
             forceDirection.y = -1f; // Prevents gravity from forcing player down too quickly if they drop off a ledge
         }
         else
         {
-            forceDirection.y -= gravityAmount * Time.fixedDeltaTime;
+            forceDirection.y -= normGravityAmount * Time.fixedDeltaTime;
         }
 
         rb.AddForce(forceDirection * moveSpeed, ForceMode.Force);
@@ -67,6 +73,11 @@ public class PlayerControllerRB : MonoBehaviour
                 Debug.Log("Jump action reached");
                 canJump = true;
             }
+        }
+        else if (value.canceled && forceDirection.y > 0)
+        {
+            Debug.Log("Stopped holding jump");
+            releasedJump = true;
         }
     }
 }
