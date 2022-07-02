@@ -253,8 +253,8 @@ MonoBehaviour:
   maxSpeed: 5
   moveSpeed: 10
   jumpForce: 6
-  gravityAmount: 10
-  lowJump: 20
+  normGravityAmount: 10
+  lowJumpGravityAmount: 20
   groundCheck: {fileID: 260311094}
   groundMask:
     serializedVersion: 2
