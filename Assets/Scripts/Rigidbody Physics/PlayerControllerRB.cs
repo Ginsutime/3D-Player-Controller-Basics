@@ -5,12 +5,22 @@ using UnityEngine.InputSystem;
 
 public class PlayerControllerRB : MonoBehaviour
 {
-    [SerializeField] private float maxSpeed = 5f;
+    private Rigidbody rb;
+
+    [Header("Player Controls Values")]
+    [SerializeField] private float maxSpeed = 5f; // Get this hooked up eventually to cap acceleration
     [SerializeField] private float moveSpeed = 1f;
+    [SerializeField] private float jumpForce = 1f;
+    [SerializeField] private float gravityAmount = 1f;
     Vector3 forceDirection;
     Vector3 xzInput;
 
-    private Rigidbody rb;
+    [Header("Ground Detection Hookups")]
+    [SerializeField] Transform groundCheck;
+    [SerializeField] LayerMask groundMask;
+    private float groundDistance = 0.2f;
+    private bool grounded;
+    private bool canJump;
 
     private void Awake()
     {
@@ -19,8 +29,26 @@ public class PlayerControllerRB : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // Using this over raycast in case of sloped surfaces
+        grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
         forceDirection = (((xzInput.x * transform.right) + (xzInput.z * transform.forward)) * moveSpeed)
             + (forceDirection.y * transform.up);
+
+        if (canJump)
+        {
+            forceDirection.y = jumpForce;
+            canJump = false;
+        }
+        else if (grounded && forceDirection.y < 0)
+        {
+            forceDirection.y = -1f; // Prevents gravity from forcing player down too quickly if they drop off a ledge
+        }
+        else
+        {
+            forceDirection.y -= gravityAmount * Time.fixedDeltaTime;
+        }
+
         rb.AddForce(forceDirection * moveSpeed, ForceMode.Force);
     }
 
@@ -28,5 +56,17 @@ public class PlayerControllerRB : MonoBehaviour
     {
         Vector2 inputValue = value.ReadValue<Vector2>();
         xzInput = new Vector3(inputValue.x, 0f, inputValue.y);
+    }
+
+    public void RBJump(InputAction.CallbackContext value)
+    {
+        if (value.performed)
+        {
+            if (grounded && forceDirection.y < 0)
+            {
+                Debug.Log("Jump action reached");
+                canJump = true;
+            }
+        }
     }
 }

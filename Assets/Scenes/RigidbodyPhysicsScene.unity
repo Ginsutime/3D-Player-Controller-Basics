@@ -218,7 +218,19 @@ MonoBehaviour:
     m_ActionId: 7c7b5767-e577-42c0-b31e-cc66bf746f0b
     m_ActionName: Standard/Look[/Mouse/delta]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 260311097}
+        m_TargetAssemblyTypeName: PlayerControllerRB, Assembly-CSharp
+        m_MethodName: RBJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: a20c635f-0898-4ee6-bf33-6987ed2b09a6
     m_ActionName: Standard/Jump[/Keyboard/space]
   m_NeverAutoSwitchControlSchemes: 0
@@ -240,6 +252,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 5
   moveSpeed: 10
+  jumpForce: 6
+  gravityAmount: 10
+  groundCheck: {fileID: 260311094}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!54 &260311098
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -730,13 +748,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1926813655}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.078214385, y: -0, z: -0, w: 0.99693656}
+  m_LocalPosition: {x: 0, y: 3.44, z: -9.91}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 8.972, y: 0, z: 0}
 --- !u!1 &2100487374
 GameObject:
   m_ObjectHideFlags: 0
