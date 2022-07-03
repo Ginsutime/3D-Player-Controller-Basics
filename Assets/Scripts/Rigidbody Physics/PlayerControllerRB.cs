@@ -36,21 +36,25 @@ public class PlayerControllerRB : MonoBehaviour
         forceDirection = (((xzInput.x * transform.right) + (xzInput.z * transform.forward)) * moveSpeed)
             + (forceDirection.y * transform.up);
 
-        if (canJump)
+        if (canJump) // Basic jump
         {
             forceDirection.y = jumpForce;
             canJump = false;
         }
-        else if (rb.velocity.y > 0 && releasedJump)
+        else if (rb.velocity.y > 0 && releasedJump) // Releasing jump early
         {
             forceDirection.y -= lowJumpGravityAmount * Time.fixedDeltaTime;
         }
-        else if (grounded && forceDirection.y < 0)
+        else if (rb.velocity.magnitude > maxSpeed) // Upon reaching max fall speed
+        {
+            rb.velocity = rb.velocity.normalized * maxSpeed;
+        }
+        else if (grounded && forceDirection.y < 0) // Ground state
         {
             releasedJump = false;
             forceDirection.y = -1f; // Prevents gravity from forcing player down too quickly if they drop off a ledge
         }
-        else
+        else // Currently falling without releasing jump early
         {
             forceDirection.y -= normGravityAmount * Time.fixedDeltaTime;
         }
