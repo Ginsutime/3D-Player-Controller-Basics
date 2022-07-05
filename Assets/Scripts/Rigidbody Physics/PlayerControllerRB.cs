@@ -16,6 +16,11 @@ public class PlayerControllerRB : MonoBehaviour
     Vector3 forceDirection;
     Vector3 xzInput;
 
+    private float coyoteTime = 0.3f;
+    private float coyoteTimeCounter;
+    private float jumpBufferTime = 0.2f;
+    private float jumpBufferCounter;
+
     [Header("Ground Detection Hookups")]
     [SerializeField] Transform groundCheck;
     [SerializeField] LayerMask groundMask;
@@ -36,8 +41,10 @@ public class PlayerControllerRB : MonoBehaviour
         forceDirection = (((xzInput.x * transform.right) + (xzInput.z * transform.forward)) * moveSpeed)
             + (forceDirection.y * transform.up);
 
-        if (canJump) // Basic jump
+        if (canJump || (grounded && jumpBufferCounter > 0)) // Basic jump
         {
+            coyoteTimeCounter = 0;
+            jumpBufferCounter = 0;
             forceDirection.y = jumpForce;
             canJump = false;
         }
@@ -52,10 +59,14 @@ public class PlayerControllerRB : MonoBehaviour
         else if (grounded && forceDirection.y < 0) // Ground state
         {
             releasedJump = false;
+            jumpBufferCounter = 0;
+            coyoteTimeCounter = coyoteTime;
             forceDirection.y = -1f; // Prevents gravity from forcing player down too quickly if they drop off a ledge
         }
         else // Currently falling without releasing jump early
         {
+            jumpBufferCounter -= Time.fixedDeltaTime;
+            coyoteTimeCounter -= Time.fixedDeltaTime;
             forceDirection.y -= normGravityAmount * Time.fixedDeltaTime;
         }
 
@@ -72,11 +83,13 @@ public class PlayerControllerRB : MonoBehaviour
     {
         if (value.performed)
         {
-            if (grounded && forceDirection.y < 0)
+            if (coyoteTimeCounter > 0f)
             {
                 Debug.Log("Jump action reached");
                 canJump = true;
             }
+            else
+                jumpBufferCounter = jumpBufferTime;
         }
         else if (value.canceled && forceDirection.y > 0)
         {
