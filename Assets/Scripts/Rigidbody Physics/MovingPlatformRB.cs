@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MovingPlatform : MonoBehaviour
+public class MovingPlatformRB : MonoBehaviour
 {
     [SerializeField] Transform[] movePoints;
     [SerializeField] float platformSpeed = 1f;
     int currentPoint = 0;
     bool backtrack;
 
-    #region Editor Visuals
+    #region Editor Tools
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
@@ -17,7 +17,19 @@ public class MovingPlatform : MonoBehaviour
         DrawPaths();
     }
 
-    private void DrawPoints()
+    void DrawPaths()
+    {
+        Gizmos.color = Color.red;
+        for (int i = 0; i < movePoints.Length - 1; i++)
+        {
+            if (movePoints[i] != null && movePoints[i+1] != null)
+            {
+                Gizmos.DrawLine(movePoints[i].position, movePoints[i + 1].position);
+            }
+        }
+    }
+
+    void DrawPoints()
     {
         Gizmos.color = Color.magenta;
         foreach (Transform point in movePoints)
@@ -26,24 +38,10 @@ public class MovingPlatform : MonoBehaviour
                 Gizmos.DrawSphere(point.position, .25f);
         }
     }
-
-    private void DrawPaths()
-    {
-        Gizmos.color = Color.red;
-        for (int i = 0; i < movePoints.Length - 1; i++)
-        {
-            if (movePoints[i] != null && movePoints[i+1] != null)
-            {
-                Vector3 thisPoint = movePoints[i].position;
-                Vector3 nextPoint = movePoints[i + 1].position;
-                Gizmos.DrawLine(thisPoint, nextPoint);
-            }
-        }
-    }
 #endif
     #endregion
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         if (backtrack == false)
         {
@@ -73,19 +71,19 @@ public class MovingPlatform : MonoBehaviour
         transform.position = Vector3.MoveTowards(transform.position, movePoints[currentPoint].transform.position, platformSpeed * Time.fixedDeltaTime);
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            other.transform.parent.gameObject.transform.parent = gameObject.transform;
+            collision.transform.parent = gameObject.transform;
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    private void OnCollisionExit(Collision collision)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            other.transform.parent.gameObject.transform.parent = null;
+            collision.transform.parent = null;
         }
     }
 }
