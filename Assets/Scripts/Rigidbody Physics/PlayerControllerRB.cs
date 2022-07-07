@@ -28,6 +28,9 @@ public class PlayerControllerRB : MonoBehaviour
     private bool grounded;
     private bool canJump, releasedJump;
 
+    [Header("Camera Hookup")]
+    [SerializeField] private Camera cam;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -40,6 +43,9 @@ public class PlayerControllerRB : MonoBehaviour
 
         forceDirection = (((xzInput.x * transform.right) + (xzInput.z * transform.forward)) * moveSpeed)
             + (forceDirection.y * transform.up);
+
+        // Rotates player to direction of the camera
+        transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, cam.transform.localEulerAngles.y, transform.localEulerAngles.z);
 
         if (canJump || (grounded && jumpBufferCounter > 0)) // Basic jump
         {
