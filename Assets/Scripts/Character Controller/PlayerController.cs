@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     private CharacterController controller;
+    private Animator animator;
 
     private Vector3 xzInput;
     private Vector3 velocity;
@@ -31,10 +32,9 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+        animator = GetComponentInChildren<Animator>();
     }
 
-    // Smoother in Update (Use fixed if you have colliders that move)
-    // Also, geometry tested by raycast refreshed only after FixedUpdate
     private void Update()
     {
         grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
@@ -68,6 +68,11 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 inputValue = value.ReadValue<Vector2>();
         xzInput = new Vector3(inputValue.x, 0f, inputValue.y);
+
+        if (value.performed)
+            animator.SetBool("IsRunning", true);
+        else
+            animator.SetBool("IsRunning", false);
     }
 
     public void OnJump(InputAction.CallbackContext value)
