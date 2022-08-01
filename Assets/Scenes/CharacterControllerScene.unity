@@ -418,7 +418,7 @@ GameObject:
   - component: {fileID: 367879329}
   - component: {fileID: 367879328}
   m_Layer: 6
-  m_Name: Visuals
+  m_Name: Old Visuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
