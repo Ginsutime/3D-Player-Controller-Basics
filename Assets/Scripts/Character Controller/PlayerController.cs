@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (grounded && velocity.y < 0)
         {
+            animator.SetBool("IsJumping", false);
             jumpBufferCounter = 0;
             coyoteTimeCounter = coyoteTime;
             velocity.y = -5f; // Prevents gravity from forcing player down too quickly if they drop off a ledge
@@ -69,9 +70,9 @@ public class PlayerController : MonoBehaviour
         Vector2 inputValue = value.ReadValue<Vector2>();
         xzInput = new Vector3(inputValue.x, 0f, inputValue.y);
 
-        if (value.performed)
+        if (value.performed && !animator.GetBool("IsJumping"))
             animator.SetBool("IsRunning", true);
-        else
+        else if (value.canceled)
             animator.SetBool("IsRunning", false);
     }
 
@@ -82,6 +83,7 @@ public class PlayerController : MonoBehaviour
             if (coyoteTimeCounter > 0f)
             {
                 // Jump state reached
+                animator.SetBool("IsJumping", true);
                 canJump = true;
             }
             else
