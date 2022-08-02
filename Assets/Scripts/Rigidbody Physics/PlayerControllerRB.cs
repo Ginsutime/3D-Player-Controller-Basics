@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class PlayerControllerRB : MonoBehaviour
 {
     private Rigidbody rb;
+    private Animator animator;
 
     [Header("Player Controls Values")]
     [SerializeField] private float maxSpeed = 5f; // Get this hooked up eventually to cap acceleration
@@ -34,6 +35,7 @@ public class PlayerControllerRB : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     private void FixedUpdate()
@@ -83,6 +85,11 @@ public class PlayerControllerRB : MonoBehaviour
     {
         Vector2 inputValue = value.ReadValue<Vector2>();
         xzInput = new Vector3(inputValue.x, 0f, inputValue.y);
+
+        if (value.performed && !animator.GetBool("IsJumping"))
+            animator.SetBool("IsRunning", true);
+        else if (value.canceled)
+            animator.SetBool("IsRunning", false);
     }
 
     public void RBJump(InputAction.CallbackContext value)
