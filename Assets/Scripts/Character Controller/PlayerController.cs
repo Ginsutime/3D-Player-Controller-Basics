@@ -51,12 +51,14 @@ public class PlayerController : MonoBehaviour
         else if (grounded && velocity.y < 0)
         {
             animator.SetBool("IsJumping", false);
+            animator.SetBool("IsFallingWithoutJumping", false);
             jumpBufferCounter = 0;
             coyoteTimeCounter = coyoteTime;
             velocity.y = -5f; // Prevents gravity from forcing player down too quickly if they drop off a ledge
         }
         else
         {
+            animator.SetBool("IsFallingWithoutJumping", true);
             jumpBufferCounter -= Time.deltaTime;
             coyoteTimeCounter -= Time.deltaTime;
             velocity.y -= gravityValue * Time.deltaTime; 
