@@ -75,6 +75,7 @@ public class PlayerControllerRB : MonoBehaviour
         }
         else // Currently falling without releasing jump early
         {
+            animator.SetBool("IsJumping", true);
             animator.SetBool("IsFallingWithoutJumping", true);
             jumpBufferCounter -= Time.fixedDeltaTime;
             coyoteTimeCounter -= Time.fixedDeltaTime;
