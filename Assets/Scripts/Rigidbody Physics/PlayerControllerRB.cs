@@ -66,6 +66,8 @@ public class PlayerControllerRB : MonoBehaviour
         }
         else if (grounded && forceDirection.y < 0) // Ground state
         {
+            animator.SetBool("IsJumping", false);
+            animator.SetBool("IsFallingWithoutJumping", false);
             releasedJump = false;
             jumpBufferCounter = 0;
             coyoteTimeCounter = coyoteTime;
@@ -73,6 +75,7 @@ public class PlayerControllerRB : MonoBehaviour
         }
         else // Currently falling without releasing jump early
         {
+            animator.SetBool("IsFallingWithoutJumping", true);
             jumpBufferCounter -= Time.fixedDeltaTime;
             coyoteTimeCounter -= Time.fixedDeltaTime;
             forceDirection.y -= normGravityAmount * Time.fixedDeltaTime;
@@ -98,16 +101,13 @@ public class PlayerControllerRB : MonoBehaviour
         {
             if (coyoteTimeCounter > 0f)
             {
-                Debug.Log("Jump action reached");
+                animator.SetBool("IsJumping", true);
                 canJump = true;
             }
             else
                 jumpBufferCounter = jumpBufferTime;
         }
         else if (value.canceled && forceDirection.y > 0)
-        {
-            Debug.Log("Stopped holding jump");
             releasedJump = true;
-        }
     }
 }
