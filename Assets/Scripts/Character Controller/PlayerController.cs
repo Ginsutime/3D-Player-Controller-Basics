@@ -58,6 +58,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            animator.SetBool("IsJumping", true);
             animator.SetBool("IsFallingWithoutJumping", true);
             jumpBufferCounter -= Time.deltaTime;
             coyoteTimeCounter -= Time.deltaTime;
